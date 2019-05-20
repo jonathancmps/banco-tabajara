@@ -36,24 +36,29 @@ public class Transferencia {
 		em.persist(conta1);
 		em.persist(conta2);
 		em.getTransaction().commit();
-		System.out.println("Saldo da conta1 :" + conta1.getSaldo() 
-			+ ". Saldo da conta2: " + conta2.getSaldo());
-		
+		System.out.println("Saldo da conta1 :" + conta1.getSaldo() + ". Saldo da conta2: " + conta2.getSaldo());
+
+		em.close();
+		em = emf.createEntityManager();
+
 		System.out.println("------------------------");
 		System.out.println("Digite o valor a retirar da conta1 e depositar na conta");
 		Double valorTransferencia = entrada.nextDouble();
-		
+
 		em.getTransaction().begin();
 		conta1.setSaldo(conta1.getSaldo() - valorTransferencia);
 		conta2.setSaldo(conta2.getSaldo() + valorTransferencia);
-		
-		if(conta1.getSaldo() > 0) {
+
+		em.merge(conta1);
+		em.merge(conta2);
+
+		if (conta1.getSaldo() > 0) {
 			em.getTransaction().commit();
 			System.out.println("Transferencia realizada com sucesso!");
-		}else {
+		} else {
 			em.getTransaction().rollback();
 			System.out.println("Transferencia não realizada, saldo insuficiente!");
 		}
-		
+
 	}
 }
